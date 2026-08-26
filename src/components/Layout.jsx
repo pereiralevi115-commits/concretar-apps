@@ -1,10 +1,11 @@
 import React from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { Store, Settings, LayoutGrid } from "lucide-react";
+import { Settings, LayoutGrid } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
+import { Image } from "@/components/ui/image";
 
-const APP_NAME = "Minha Loja";
+const LOGO_URL = "https://media.base44.com/images/public/6a8f0804d9f191ee3d88f38c/4570aad3c_generated_image.png";
 
 export default function Layout() {
   const { pathname } = useLocation();
@@ -20,11 +21,11 @@ export default function Layout() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-6">
               <Link to="/" className="flex items-center gap-2.5">
-                <div className="h-10 w-10 rounded-xl bg-brand flex items-center justify-center">
-                  <Store className="w-5 h-5 text-slate-900" />
+                <div className="h-10 w-10 rounded-xl overflow-hidden bg-brand shrink-0">
+                  <Image src={LOGO_URL} alt="Concretar Apps" className="w-full h-full" />
                 </div>
                 <span className="font-bold text-lg text-white">
-                  Concretar<span className="text-brand">RH</span>
+                  Concretar<span className="text-brand"> Apps</span>
                 </span>
               </Link>
               <nav className="hidden sm:flex items-center gap-1">
