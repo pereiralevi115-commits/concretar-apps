@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,17 +14,24 @@ export default function AppForm({ initial, onSubmit, onCancel }) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadingApk, setUploadingApk] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const iconInputRef = useRef(null);
+  const apkInputRef = useRef(null);
   const set = (k) => (e) => setData({ ...data, [k]: e.target.value });
 
   const onUploadApk = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploadingApk(true);
+    setUploadError("");
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setData((d) => ({ ...d, apk_url: file_url }));
+    } catch (err) {
+      setUploadError("Falha ao enviar APK. Tente novamente.");
     } finally {
       setUploadingApk(false);
+      e.target.value = "";
     }
   };
 
@@ -32,11 +39,15 @@ export default function AppForm({ initial, onSubmit, onCancel }) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+    setUploadError("");
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setData((d) => ({ ...d, icon_url: file_url }));
+    } catch (err) {
+      setUploadError("Falha ao enviar imagem.");
     } finally {
       setUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -75,30 +86,39 @@ export default function AppForm({ initial, onSubmit, onCancel }) {
               <Upload className="w-4 h-4 text-slate-400" />
             )}
           </div>
-          <label className="cursor-pointer">
-            <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50">
-              <Upload className="w-4 h-4" />
-              {uploading ? "Enviando..." : "Enviar imagem"}
-            </span>
-            <input type="file" accept="image/*" className="hidden" onChange={onUploadIcon} disabled={uploading} />
-          </label>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => iconInputRef.current?.click()}
+            disabled={uploading}
+            className="rounded-md h-9"
+          >
+            <Upload className="w-4 h-4" />
+            {uploading ? "Enviando..." : "Enviar imagem"}
+          </Button>
+          <input ref={iconInputRef} type="file" accept="image/*" className="hidden" onChange={onUploadIcon} disabled={uploading} />
         </div>
         <Input value={data.icon_url} onChange={set("icon_url")} placeholder="ou cole o link do ícone" className={field} />
       </div>
       <div className="space-y-2">
         <Label className="text-xs font-medium text-slate-500">APK do app (instalação direta no Android)</Label>
         <div className="flex items-center gap-3">
-          <label className="cursor-pointer">
-            <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50">
-              <Upload className="w-4 h-4" />
-              {uploadingApk ? "Enviando APK..." : "Enviar APK"}
-            </span>
-            <input type="file" accept=".apk,application/vnd.android.package-archive" className="hidden" onChange={onUploadApk} disabled={uploadingApk} />
-          </label>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => apkInputRef.current?.click()}
+            disabled={uploadingApk}
+            className="rounded-md h-9"
+          >
+            <Upload className="w-4 h-4" />
+            {uploadingApk ? "Enviando APK..." : "Enviar APK"}
+          </Button>
+          <input ref={apkInputRef} type="file" accept=".apk,application/vnd.android.package-archive" className="hidden" onChange={onUploadApk} disabled={uploadingApk} />
           {data.apk_url && <span className="text-xs text-emerald-600 font-medium truncate max-w-[180px]">APK enviado ✓</span>}
         </div>
         <Input value={data.apk_url} onChange={set("apk_url")} placeholder="ou cole o link do APK" className={field} />
       </div>
+      {uploadError && <p className="text-xs text-red-600 font-medium">{uploadError}</p>}
       <div className="space-y-2">
         <Label className="text-xs font-medium text-slate-500">Frase curta</Label>
         <Input value={data.tagline} onChange={set("tagline")} className={field} />
