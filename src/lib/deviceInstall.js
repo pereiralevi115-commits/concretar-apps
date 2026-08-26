@@ -1,12 +1,14 @@
-import { Download, Settings, Check, FileDown } from "lucide-react";
+import { Download, Settings, ShieldOff, Check, FileDown } from "lucide-react";
 
-// Passo a passo de instalação do APK no Android, específico por modelo.
+// Passo a passo de instalação do APK no Android, específico por modelo,
+// incluindo como liberar a instalação de fontes desconhecidas.
 export function getInstallSteps(appName) {
   const ua = navigator.userAgent || "";
 
   const isSamsung = /Samsung/i.test(ua) || /SM-[A-Z0-9]/i.test(ua);
   const isMotorola = /Moto|motorola/i.test(ua) || /XT\d{4}/i.test(ua);
   const isAndroid = /Android/i.test(ua);
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !/Windows Phone/.test(ua);
 
   const stepDownload = { icon: Download, text: "Toque em “Baixar e instalar APK” abaixo. O arquivo será baixado para o celular." };
   const stepOpen = { icon: FileDown, text: `Após o download, abra o arquivo ${appName}.apk na pasta Downloads (ou na notificação “Download concluído”).` };
@@ -19,7 +21,8 @@ export function getInstallSteps(appName) {
       steps: [
         stepDownload,
         stepOpen,
-        { icon: Settings, text: "Se o Android pedir permissão: Configurações → Apps → navegador → Instalar apps desconhecidas → Permitir." },
+        { icon: ShieldOff, text: "Se aparecer “Aplicativo desconhecido bloqueado”: vá em Configurações → Segurança e privacidade → Bloqueador automático e desative a opção." },
+        { icon: Settings, text: "Se pedir permissão: Configurações → Apps → (Samsung Internet ou Chrome) → Instalar apps desconhecidas → Permitir." },
         stepInstall,
       ],
     };
@@ -32,7 +35,7 @@ export function getInstallSteps(appName) {
       steps: [
         stepDownload,
         stepOpen,
-        { icon: Settings, text: "Se o Android pedir permissão: Configurações → Apps → Chrome → Instalar apps desconhecidas → Permitir nesta origem." },
+        { icon: Settings, text: "Se pedir permissão: Configurações → Apps → Chrome → Instalar apps desconhecidas → Permitir nesta origem." },
         stepInstall,
       ],
     };
@@ -45,14 +48,13 @@ export function getInstallSteps(appName) {
       steps: [
         stepDownload,
         stepOpen,
-        { icon: Settings, text: "Se o Android pedir permissão: Configurações → Apps → Chrome → Instalar apps desconhecidas → Permitir nesta origem." },
+        { icon: Settings, text: "Se pedir permissão: Configurações → Apps → Chrome → Instalar apps desconhecidas → Permitir nesta origem." },
         stepInstall,
       ],
     };
   }
 
   // iPhone/iPad/Computador — não suportam APK
-  const isIOS = /iPad|iPhone|iPod/.test(ua);
   return {
     device: isIOS ? "iPhone / iPad" : "Computador",
     browser: isIOS ? "iOS" : "Navegador",
