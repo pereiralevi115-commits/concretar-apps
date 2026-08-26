@@ -1,12 +1,13 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Smartphone } from "lucide-react";
+import { Smartphone, Download } from "lucide-react";
 import { getInstallSteps } from "@/lib/deviceInstall";
 
 export default function InstallSheet({ app, open, onOpenChange }) {
   if (!app) return null;
   const { device, browser, steps } = getInstallSteps(app.name);
+  const hasApk = Boolean(app.apk_url);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -28,12 +29,22 @@ export default function InstallSheet({ app, open, onOpenChange }) {
             </div>
           ))}
         </div>
+        {hasApk && (
+          <Button
+            variant="brand"
+            className="w-full h-10 rounded-lg"
+            onClick={() => window.open(app.apk_url, "_blank")}
+          >
+            <Download className="w-4 h-4" />
+            Baixar e instalar APK
+          </Button>
+        )}
         <Button
-          variant="brand"
+          variant={hasApk ? "outline" : "brand"}
           className="w-full h-10 rounded-lg"
           onClick={() => window.open(app.url, "_blank")}
         >
-          Abrir {app.name}
+          Abrir {app.name} no navegador
         </Button>
       </DialogContent>
     </Dialog>

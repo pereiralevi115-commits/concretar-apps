@@ -7,13 +7,26 @@ import { Switch } from "@/components/ui/switch";
 import { Upload } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
-const empty = { name: "", tagline: "", description: "", url: "", icon_url: "", category: "Produtividade", featured: false };
+const empty = { name: "", tagline: "", description: "", url: "", apk_url: "", icon_url: "", category: "Produtividade", featured: false };
 
 export default function AppForm({ initial, onSubmit, onCancel }) {
   const [data, setData] = useState({ ...empty, ...(initial || {}) });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingApk, setUploadingApk] = useState(false);
   const set = (k) => (e) => setData({ ...data, [k]: e.target.value });
+
+  const onUploadApk = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingApk(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setData((d) => ({ ...d, apk_url: file_url }));
+    } finally {
+      setUploadingApk(false);
+    }
+  };
 
   const onUploadIcon = async (e) => {
     const file = e.target.files?.[0];
@@ -71,6 +84,20 @@ export default function AppForm({ initial, onSubmit, onCancel }) {
           </label>
         </div>
         <Input value={data.icon_url} onChange={set("icon_url")} placeholder="ou cole o link do ícone" className={field} />
+      </div>
+      <div className="space-y-2">
+        <Label className="text-xs font-medium text-slate-500">APK do app (instalação direta no Android)</Label>
+        <div className="flex items-center gap-3">
+          <label className="cursor-pointer">
+            <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50">
+              <Upload className="w-4 h-4" />
+              {uploadingApk ? "Enviando APK..." : "Enviar APK"}
+            </span>
+            <input type="file" accept=".apk,application/vnd.android.package-archive" className="hidden" onChange={onUploadApk} disabled={uploadingApk} />
+          </label>
+          {data.apk_url && <span className="text-xs text-emerald-600 font-medium truncate max-w-[180px]">APK enviado ✓</span>}
+        </div>
+        <Input value={data.apk_url} onChange={set("apk_url")} placeholder="ou cole o link do APK" className={field} />
       </div>
       <div className="space-y-2">
         <Label className="text-xs font-medium text-slate-500">Frase curta</Label>
