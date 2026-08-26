@@ -10,8 +10,8 @@ function base64UrlEncode(str) {
 
 const UA = 'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Mobile Safari/537.36';
 
-// Follow redirect chain (headers only, no body download) until we reach a
-// URL containing `resid=` on onedrive.live.com — the canonical share page.
+// Follow redirect chain (headers only) until we reach a URL containing
+// `resid=` on onedrive.live.com — the canonical share page.
 async function resolveShortLink(url) {
   let current = url;
   const seen = new Set();
@@ -32,11 +32,10 @@ async function resolveShortLink(url) {
   return current;
 }
 
-// Follow the full redirect chain (headers only) starting from the legacy
-// download endpoint until we leave the onedrive.live.com/login domain — i.e.
-// reach the pre-signed CDN blob URL. Returns the blob URL (one-click download,
-// no OneDrive login needed), or null if the chain dead-ends on a login/HTML
-// page (private share) or loops.
+// Follow the full redirect chain (headers only) until we leave the
+// onedrive.live.com/login.live.com domain — i.e. reach the pre-signed CDN
+// blob URL. Returns the blob URL, or null if the chain dead-ends on a
+// login/HTML page (private or SPO-migrated share) or loops.
 const KEEP_HOST = /onedrive\.live\.com|login\.live\.com|account\.live\.com|1drv\.ms/i;
 
 async function followToFile(startUrl) {
@@ -44,29 +43,27 @@ async function followToFile(startUrl) {
   let current = startUrl;
   const seen = new Set();
   for (let i = 0; i < 15; i++) {
-    if (seen.has(current)) return { trace: trace.concat(['loop:' + current.slice(0, 60)]) };
+    if (seen.has(current)) return { trace: trace.concat(['loop']) };
     seen.add(current);
     let res;
     try {
       res = await fetch(current, { redirect: 'manual', headers: { 'user-agent': UA } });
     } catch (e) {
-      return { trace: trace.concat(['fail:' + String(e).slice(0, 60)]) };
+      return { trace: trace.concat(['fail:' + String(e).slice(0, 50)]) };
     }
-    trace.push(`${res.status} ${current.slice(0, 70)}`);
     if (res.status >= 300 && res.status < 400) {
       const loc = res.headers.get('location');
       if (!loc) return { trace: trace.concat(['noloc']) };
       try {
         current = new URL(loc, current).toString();
       } catch {
-        return { trace: trace.concat(['badloc:' + loc.slice(0, 60)]) };
+        return { trace: trace.concat(['badloc']) };
       }
       if (!KEEP_HOST.test(current)) return { url: current, trace };
       continue;
     }
     if (!KEEP_HOST.test(current)) return { url: current, trace };
     const ct = res.headers.get('content-type') || '';
-    trace.push('ct:' + ct.slice(0, 40));
     if (/html/i.test(ct)) return { trace: trace.concat(['html']) };
     return { url: current, trace };
   }
@@ -98,7 +95,8 @@ async function resolveOneDrivePersonal(url) {
     }
   }
 
-  // 3. Build the legacy direct-download endpoint and probe it for the real blob URL.
+  // 3. Legacy direct-download endpoint — works for classic (non-migrated)
+  // consumer OneDrive public shares: 302s to a pre-signed CDN blob.
   if (resid) {
     const params = new URLSearchParams();
     params.set('resid', resid);
@@ -106,13 +104,13 @@ async function resolveOneDrivePersonal(url) {
     const downloadUrl = `https://onedrive.live.com/download?${params.toString()}`;
     const blob = await followToFile(downloadUrl);
     if (blob && blob.url) return blob.url;
-    // fall through to shares API fallback
   }
 
-  // 4. Microsoft shares API (base64url-encoded share link). For genuinely
-  // public "anyone with the link" shares this returns a 302 to the CDN blob.
-  // Follow it to capture the blob; if it requires auth (401) this share is
-  // not truly anonymous and we fall back to the original share URL.
+  // 4. Microsoft shares API — works only for genuinely anonymous shares
+  // whose host account has NOT been migrated to the SharePoint backend.
+  // SPO-migrated personal accounts return 401 here; the only working
+  // download is the browser's JS-driven flow, so we fall back to the
+  // original share URL (opens the OneDrive web page).
   const sharesApi = `https://api.onedrive.com/v1.0/shares/u!${base64UrlEncode(url)}/root/content`;
   const sharesBlob = await followToFile(sharesApi);
   if (sharesBlob && sharesBlob.url && sharesBlob.url !== sharesApi) return sharesBlob.url;
