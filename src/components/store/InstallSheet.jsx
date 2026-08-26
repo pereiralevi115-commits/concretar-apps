@@ -1,40 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 import { getInstallSteps } from "@/lib/deviceInstall";
 
-function toDirectDownload(url) {
-  if (!url) return url;
-  try {
-    // OneDrive pessoal (onedrive.live.com / 1drv.ms) — API de shares
-    // com /root/content retorna o conteúdo direto do arquivo (redireciona).
-    if (/onedrive\.live\.com|1drv\.ms/i.test(url)) {
-      const b64 = btoa(url).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-      return `https://api.onedrive.com/v1.0/shares/u!${b64}/root/content`;
-    }
-    // OneDrive for Business / SharePoint — ?download=1 força o download
-    if (/sharepoint\.com|-my\.sharepoint\.com/i.test(url)) {
-      const u = new URL(url);
-      u.searchParams.set("download", "1");
-      return u.toString();
-    }
-    // Google Drive share links — force direct download
-    if (/drive\.google\.com/i.test(url)) {
-      const m = url.match(/\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
-      if (m) return `https://drive.google.com/uc?export=download&id=${m[1]}`;
-    }
-    return url;
-  } catch {
-    return url;
-  }
-}
-
 export default function InstallSheet({ app, open, onOpenChange }) {
+  const [resolving, setResolving] = useState(false);
   if (!app) return null;
   const { device, icon: DeviceIcon, steps } = getInstallSteps(app.name);
   const hasApk = Boolean(app.apk_url);
-  const apkDirect = toDirectDownload(app.apk_url);
+
+  const handleInstall = async () => {
+    if (!app.apk_url) return;
+    setResolving(true);
+    try {
+      const res = await base44.functions.invoke("resolveDownloadUrl", { url: app.apk_url });
+      window.open(res.data.url, "_blank");
+    } catch {
+      window.open(app.apk_url, "_blank");
+    } finally {
+      setResolving(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -69,10 +57,11 @@ export default function InstallSheet({ app, open, onOpenChange }) {
           <Button
             variant="brand"
             className="w-full h-11 rounded-lg font-semibold"
-            onClick={() => window.open(apkDirect, "_blank")}
+            onClick={handleInstall}
+            disabled={resolving}
           >
-            <Download className="w-4 h-4" />
-            Baixar e instalar APK
+            {resolving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            {resolving ? "Preparando download..." : "Baixar e instalar APK"}
           </Button>
         )}
       </DialogContent>
