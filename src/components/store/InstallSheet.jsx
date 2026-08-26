@@ -46,20 +46,29 @@ export default function InstallSheet({ app, open, onOpenChange }) {
             <span>Passo a passo para {device}</span>
           </div>
         </DialogHeader>
-        <div className="space-y-4 py-2">
+        <p className="text-xs text-slate-500 -mt-1">Treinamento rápido: siga cada etapa na ordem.</p>
+        <div className="space-y-3 py-1">
           {steps.map((s, i) => (
-            <div key={i} className="flex gap-3 items-start">
-              <div className="h-9 w-9 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
-                <s.icon className="w-4 h-4" />
+            <div key={i} className="flex gap-3 items-start rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+              <div className="flex flex-col items-center shrink-0">
+                <div className="h-9 w-9 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm tabular-nums">
+                  {i + 1}
+                </div>
               </div>
-              <p className="text-sm text-slate-600 leading-relaxed pt-1.5">{s.text}</p>
+              <div className="min-w-0 pt-0.5">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                  <s.icon className="w-3.5 h-3.5" />
+                  <span>Etapa {i + 1}</span>
+                </div>
+                <p className="text-sm text-slate-700 leading-relaxed mt-0.5">{s.text}</p>
+              </div>
             </div>
           ))}
         </div>
         {hasApk && (
           <Button
             variant="brand"
-            className="w-full h-10 rounded-lg"
+            className="w-full h-11 rounded-lg font-semibold"
             onClick={() => window.open(apkDirect, "_blank")}
           >
             <Download className="w-4 h-4" />
