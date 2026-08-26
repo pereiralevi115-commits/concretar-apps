@@ -24,7 +24,7 @@ export default function Layout() {
                 <div className="h-10 w-10 rounded-xl overflow-hidden bg-brand shrink-0">
                   <Image src={LOGO_URL} alt="Concretar Apps" className="w-full h-full" />
                 </div>
-                <span className="font-bold text-lg text-white">
+                <span className="font-bold text-lg uppercase tracking-tight text-white">
                   Concretar<span className="text-brand"> Apps</span>
                 </span>
               </Link>
