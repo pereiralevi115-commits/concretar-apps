@@ -26,16 +26,16 @@ export default function InstallSheet({ app, open, onOpenChange }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white border-slate-200 max-w-md">
-        <DialogHeader>
+      <DialogContent className="bg-white border-slate-200 max-w-md max-h-[90vh] flex flex-col gap-3 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+        <DialogHeader className="space-y-1 shrink-0">
           <DialogTitle className="font-bold text-lg text-slate-900">Instalar {app.name}</DialogTitle>
-          <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-slate-500">
             <DeviceIcon className="w-3.5 h-3.5" />
             <span>Passo a passo para {device}</span>
           </div>
         </DialogHeader>
-        <p className="text-xs text-slate-500 -mt-1">Treinamento rápido: siga cada etapa na ordem.</p>
-        <div className="space-y-3 py-1">
+        <p className="text-xs text-slate-500 shrink-0">Treinamento rápido: siga cada etapa na ordem.</p>
+        <div className="space-y-3 py-1 overflow-y-auto -mx-1 px-1 flex-1 min-h-0">
           {steps.map((s, i) => (
             <div key={i} className="flex gap-3 items-start rounded-xl border border-slate-200 bg-slate-50/60 p-3">
               <div className="flex flex-col items-center shrink-0">
@@ -56,7 +56,7 @@ export default function InstallSheet({ app, open, onOpenChange }) {
         {hasApk && (
           <Button
             variant="brand"
-            className="w-full h-11 rounded-lg font-semibold"
+            className="w-full h-11 rounded-lg font-semibold shrink-0"
             onClick={handleInstall}
             disabled={resolving}
           >
