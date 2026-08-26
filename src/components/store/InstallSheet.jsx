@@ -1,29 +1,22 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Share, MoreVertical, PlusSquare, ExternalLink } from "lucide-react";
+import { Smartphone } from "lucide-react";
+import { getInstallSteps } from "@/lib/deviceInstall";
 
 export default function InstallSheet({ app, open, onOpenChange }) {
   if (!app) return null;
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-  const steps = isIOS
-    ? [
-        { icon: ExternalLink, text: "Abra o app no Safari (o botão abaixo já faz isso)." },
-        { icon: Share, text: "Toque no ícone de Compartilhar na barra do Safari." },
-        { icon: PlusSquare, text: "Escolha “Adicionar à Tela de Início” e confirme." },
-      ]
-    : [
-        { icon: ExternalLink, text: "Abra o app no Chrome (o botão abaixo já faz isso)." },
-        { icon: MoreVertical, text: "Toque no menu ⋮ no canto superior direito." },
-        { icon: PlusSquare, text: "Escolha “Instalar app” ou “Adicionar à tela inicial”." },
-      ];
+  const { device, browser, steps } = getInstallSteps(app.name);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-white border-slate-200 max-w-md">
         <DialogHeader>
           <DialogTitle className="font-bold text-lg text-slate-900">Instalar {app.name}</DialogTitle>
+          <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Passo a passo para {device} · {browser}</span>
+          </div>
         </DialogHeader>
         <div className="space-y-4 py-2">
           {steps.map((s, i) => (
