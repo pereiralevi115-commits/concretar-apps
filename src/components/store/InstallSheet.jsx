@@ -61,13 +61,6 @@ export default function InstallSheet({ app, open, onOpenChange }) {
             Baixar e instalar APK
           </Button>
         )}
-        <Button
-          variant={hasApk ? "outline" : "brand"}
-          className="w-full h-10 rounded-lg"
-          onClick={() => window.open(app.url, "_blank")}
-        >
-          Abrir {app.name} no navegador
-        </Button>
       </DialogContent>
     </Dialog>
   );

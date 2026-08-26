@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Image } from "@/components/ui/image";
 import InstallSheet from "@/components/store/InstallSheet";
-import { ArrowLeft, Download, Boxes, ExternalLink } from "lucide-react";
+import { ArrowLeft, Download, Boxes } from "lucide-react";
 
 export default function AppDetail() {
   const { id } = useParams();
@@ -48,14 +48,9 @@ export default function AppDetail() {
           </div>
         </div>
 
-        <div className="flex gap-3 mt-6">
-          <Button variant="brand" onClick={install} className="flex-1 h-10 rounded-lg font-medium">
-            <Download className="w-4 h-4" /> Instalar no celular
-          </Button>
-          <Button variant="outline" className="h-10 rounded-lg" onClick={() => window.open(app.url, "_blank")}>
-            <ExternalLink className="w-4 h-4" />
-          </Button>
-        </div>
+        <Button variant="brand" onClick={install} className="w-full h-10 rounded-lg font-medium mt-6">
+          <Download className="w-4 h-4" /> Instalar no celular
+        </Button>
       </div>
 
       {app.description && (
