@@ -32,23 +32,45 @@ async function resolveShortLink(url) {
   return current;
 }
 
-// Probe the legacy download endpoint. If the share is public, it 302-redirects
-// straight to the pre-signed CDN blob URL — return that (one-click download,
-// no OneDrive login needed). If it redirects to a login/account page or
-// returns HTML (200), the link is private/broken → return null.
-async function probeDownload(downloadUrl) {
-  try {
-    const res = await fetch(downloadUrl, { redirect: 'manual', headers: { 'user-agent': UA } });
+// Follow the full redirect chain (headers only) starting from the legacy
+// download endpoint until we leave the onedrive.live.com/login domain — i.e.
+// reach the pre-signed CDN blob URL. Returns the blob URL (one-click download,
+// no OneDrive login needed), or null if the chain dead-ends on a login/HTML
+// page (private share) or loops.
+const KEEP_HOST = /onedrive\.live\.com|login\.live\.com|account\.live\.com|1drv\.ms/i;
+
+async function followToFile(startUrl) {
+  const trace = [];
+  let current = startUrl;
+  const seen = new Set();
+  for (let i = 0; i < 15; i++) {
+    if (seen.has(current)) return { trace: trace.concat(['loop:' + current.slice(0, 60)]) };
+    seen.add(current);
+    let res;
+    try {
+      res = await fetch(current, { redirect: 'manual', headers: { 'user-agent': UA } });
+    } catch (e) {
+      return { trace: trace.concat(['fail:' + String(e).slice(0, 60)]) };
+    }
+    trace.push(`${res.status} ${current.slice(0, 70)}`);
     if (res.status >= 300 && res.status < 400) {
       const loc = res.headers.get('location');
-      if (loc && !/login\.|account\.live\.com|signin\./i.test(loc)) {
-        return loc;
+      if (!loc) return { trace: trace.concat(['noloc']) };
+      try {
+        current = new URL(loc, current).toString();
+      } catch {
+        return { trace: trace.concat(['badloc:' + loc.slice(0, 60)]) };
       }
+      if (!KEEP_HOST.test(current)) return { url: current, trace };
+      continue;
     }
-  } catch {
-    // ignore
+    if (!KEEP_HOST.test(current)) return { url: current, trace };
+    const ct = res.headers.get('content-type') || '';
+    trace.push('ct:' + ct.slice(0, 40));
+    if (/html/i.test(ct)) return { trace: trace.concat(['html']) };
+    return { url: current, trace };
   }
-  return null;
+  return { trace: trace.concat(['maxhops']) };
 }
 
 async function resolveOneDrivePersonal(url) {
@@ -82,8 +104,8 @@ async function resolveOneDrivePersonal(url) {
     params.set('resid', resid);
     if (authkey) params.set('authkey', authkey);
     const downloadUrl = `https://onedrive.live.com/download?${params.toString()}`;
-    const blob = await probeDownload(downloadUrl);
-    if (blob) return blob;
+    const blob = await followToFile(downloadUrl);
+    if (blob && blob.url) return blob.url;
     // fall through to shares API fallback
   }
 
