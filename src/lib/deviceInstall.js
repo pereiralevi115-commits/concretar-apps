@@ -21,8 +21,8 @@ export function getInstallSteps(appName) {
       steps: [
         stepDownload,
         stepOpen,
-        { icon: ShieldOff, text: "Se aparecer “Aplicativo desconhecido bloqueado”: vá em Configurações → Segurança e privacidade → Bloqueador automático e desative a opção." },
-        { icon: Settings, text: "Se pedir permissão: Configurações → Apps → (Samsung Internet ou Chrome) → Instalar apps desconhecidas → Permitir." },
+        { icon: ShieldOff, text: "Se aparecer “Aplicativo desconhecido bloqueado”, toque em OK e desative o Bloqueador automático: Configurações → Segurança e privacidade → Bloqueador automático → desativar." },
+        { icon: Settings, text: "Depois abra o arquivo novamente. Se pedir permissão de fonte desconhecida: Configurações → Apps → (Samsung Internet ou Chrome) → Instalar apps desconhecidas → Permitir." },
         stepInstall,
       ],
     };
