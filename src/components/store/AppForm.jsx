@@ -13,27 +13,9 @@ export default function AppForm({ initial, onSubmit, onCancel }) {
   const [data, setData] = useState({ ...empty, ...(initial || {}) });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [uploadingApk, setUploadingApk] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const iconInputRef = useRef(null);
-  const apkInputRef = useRef(null);
   const set = (k) => (e) => setData({ ...data, [k]: e.target.value });
-
-  const onUploadApk = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingApk(true);
-    setUploadError("");
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setData((d) => ({ ...d, apk_url: file_url }));
-    } catch (err) {
-      setUploadError("Falha ao enviar APK. Tente novamente.");
-    } finally {
-      setUploadingApk(false);
-      e.target.value = "";
-    }
-  };
 
   const onUploadIcon = async (e) => {
     const file = e.target.files?.[0];
@@ -102,23 +84,9 @@ export default function AppForm({ initial, onSubmit, onCancel }) {
       </div>
       <div className="space-y-2">
         <Label className="text-xs font-medium text-slate-500">APK do app (instalação direta no Android)</Label>
-        <div className="flex items-center gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => apkInputRef.current?.click()}
-            disabled={uploadingApk}
-            className="rounded-md h-9"
-          >
-            <Upload className="w-4 h-4" />
-            {uploadingApk ? "Enviando APK..." : "Enviar APK"}
-          </Button>
-          <input ref={apkInputRef} type="file" accept=".apk,application/vnd.android.package-archive" className="hidden" onChange={onUploadApk} disabled={uploadingApk} />
-          {data.apk_url && <span className="text-xs text-emerald-600 font-medium truncate max-w-[180px]">APK enviado ✓</span>}
-        </div>
-        <Input value={data.apk_url} onChange={set("apk_url")} placeholder="ou cole o link do APK" className={field} />
+        <Input value={data.apk_url} onChange={set("apk_url")} placeholder="Cole o link do APK (hospedado em outro lugar)" className={field} />
+        <p className="text-xs text-slate-400">O upload direto de APK não é suportado — hospede o arquivo (ex.: Google Drive com link público) e cole a URL aqui.</p>
       </div>
-      {uploadError && <p className="text-xs text-red-600 font-medium">{uploadError}</p>}
       <div className="space-y-2">
         <Label className="text-xs font-medium text-slate-500">Frase curta</Label>
         <Input value={data.tagline} onChange={set("tagline")} className={field} />
