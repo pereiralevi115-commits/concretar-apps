@@ -4,10 +4,32 @@ import { Button } from "@/components/ui/button";
 import { Smartphone, Download } from "lucide-react";
 import { getInstallSteps } from "@/lib/deviceInstall";
 
+function toDirectDownload(url) {
+  if (!url) return url;
+  try {
+    // OneDrive share links — force download
+    if (/onedrive\.live\.com|1drv\.ms/i.test(url)) {
+      const u = new URL(url);
+      if (u.hostname === "1drv.ms") return url;
+      u.searchParams.set("download", "1");
+      return u.toString();
+    }
+    // Google Drive share links — force direct download
+    if (/drive\.google\.com/i.test(url)) {
+      const m = url.match(/\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+      if (m) return `https://drive.google.com/uc?export=download&id=${m[1]}`;
+    }
+    return url;
+  } catch {
+    return url;
+  }
+}
+
 export default function InstallSheet({ app, open, onOpenChange }) {
   if (!app) return null;
   const { device, browser, steps } = getInstallSteps(app.name);
   const hasApk = Boolean(app.apk_url);
+  const apkDirect = toDirectDownload(app.apk_url);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -33,7 +55,7 @@ export default function InstallSheet({ app, open, onOpenChange }) {
           <Button
             variant="brand"
             className="w-full h-10 rounded-lg"
-            onClick={() => window.open(app.apk_url, "_blank")}
+            onClick={() => window.open(apkDirect, "_blank")}
           >
             <Download className="w-4 h-4" />
             Baixar e instalar APK
