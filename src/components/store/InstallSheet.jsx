@@ -7,21 +7,16 @@ import { getInstallSteps } from "@/lib/deviceInstall";
 function toDirectDownload(url) {
   if (!url) return url;
   try {
-    // OneDrive share links — force download direto
-    if (/onedrive\.live\.com/i.test(url)) {
-      const u = new URL(url);
-      const resid = u.searchParams.get("resid");
-      const authkey = u.searchParams.get("authkey");
-      if (resid) {
-        const params = new URLSearchParams({ resid });
-        if (authkey) params.set("authkey", authkey);
-        return `https://onedrive.live.com/download.aspx?${params.toString()}`;
-      }
+    // OneDrive pessoal (onedrive.live.com / 1drv.ms) — usa a API de shares
+    // que retorna um redirecionamento direto ao conteúdo do arquivo.
+    if (/onedrive\.live\.com|1drv\.ms/i.test(url)) {
+      const b64 = btoa(url).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+      return `https://api.onedrive.com/v1.0/shares/u!${b64}/content`;
     }
-    // 1drv.ms short links — anexa ?e=download para forçar download
-    if (/1drv\.ms/i.test(url)) {
+    // OneDrive for Business / SharePoint — ?download=1 força o download
+    if (/sharepoint\.com|-my\.sharepoint\.com/i.test(url)) {
       const u = new URL(url);
-      u.searchParams.set("e", "download");
+      u.searchParams.set("download", "1");
       return u.toString();
     }
     // Google Drive share links — force direct download
