@@ -1,7 +1,7 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Smartphone, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { getInstallSteps } from "@/lib/deviceInstall";
 
 function toDirectDownload(url) {
@@ -32,7 +32,7 @@ function toDirectDownload(url) {
 
 export default function InstallSheet({ app, open, onOpenChange }) {
   if (!app) return null;
-  const { device, browser, steps } = getInstallSteps(app.name);
+  const { device, icon: DeviceIcon, steps } = getInstallSteps(app.name);
   const hasApk = Boolean(app.apk_url);
   const apkDirect = toDirectDownload(app.apk_url);
 
@@ -42,8 +42,8 @@ export default function InstallSheet({ app, open, onOpenChange }) {
         <DialogHeader>
           <DialogTitle className="font-bold text-lg text-slate-900">Instalar {app.name}</DialogTitle>
           <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
-            <Smartphone className="w-3.5 h-3.5" />
-            <span>Passo a passo para {device} · {browser}</span>
+            <DeviceIcon className="w-3.5 h-3.5" />
+            <span>Passo a passo para {device}</span>
           </div>
         </DialogHeader>
         <div className="space-y-4 py-2">
