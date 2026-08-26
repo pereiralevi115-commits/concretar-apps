@@ -15,6 +15,7 @@ import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
 import AppDetail from '@/pages/AppDetail';
 import Manage from '@/pages/Manage';
+import { isBuilderPreview } from '@/lib/isBuilder';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -50,7 +51,7 @@ const AuthenticatedApp = () => {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/app/:id" element={<AppDetail />} />
-          <Route path="/gerenciar" element={<Manage />} />
+          {isBuilderPreview() && <Route path="/gerenciar" element={<Manage />} />}
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

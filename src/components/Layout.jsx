@@ -4,14 +4,16 @@ import { Settings, LayoutGrid } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Image } from "@/components/ui/image";
+import { isBuilderPreview } from "@/lib/isBuilder";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a8f0804d9f191ee3d88f38c/4570aad3c_generated_image.png";
 
 export default function Layout() {
   const { pathname } = useLocation();
+  const showManage = isBuilderPreview();
   const navItems = [
     { to: "/", label: "Vitrine", icon: LayoutGrid },
-    { to: "/gerenciar", label: "Gerenciar", icon: Settings },
+    ...(showManage ? [{ to: "/gerenciar", label: "Gerenciar", icon: Settings }] : []),
   ];
 
   return (
