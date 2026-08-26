@@ -1,0 +1,40 @@
+{
+  "name": "StoreApp",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "tagline": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "icon_url": {
+      "type": "string"
+    },
+    "cover_url": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "default": "Produtividade"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "install_count": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name",
+    "url"
+  ]
+}
