@@ -68,8 +68,14 @@ export default function Home() {
                 to={`/app/${app.id}`}
                 className="shrink-0 w-64 rounded-2xl border border-slate-200 bg-white shadow-sm p-5 space-y-3 hover:border-slate-300 transition-colors"
               >
-                <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
-                  {app.icon_url ? <Image src={app.icon_url} alt={app.name} className="w-full h-full" /> : <Boxes className="w-5 h-5 text-slate-400" />}
+                <div className="flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
+                    {app.icon_url ? <Image src={app.icon_url} alt={app.name} className="w-full h-full" /> : <Boxes className="w-5 h-5 text-slate-400" />}
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold">
+                    <Boxes className="w-3.5 h-3.5" />
+                    {app.category || "App"}
+                  </span>
                 </div>
                 <div>
                   <p className="font-semibold text-slate-900">{app.name}</p>
