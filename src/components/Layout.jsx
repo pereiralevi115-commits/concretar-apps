@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Image } from "@/components/ui/image";
 import { isBuilderPreview } from "@/lib/isBuilder";
 
-const LOGO_URL = "https://media.base44.com/images/public/6a8f0804d9f191ee3d88f38c/4570aad3c_generated_image.png";
+const LOGO_URL = "https://media.base44.com/images/public/6a8f0804d9f191ee3d88f38c/4dd99fdcb_generated_image.png";
 
 export default function Layout() {
   const { pathname } = useLocation();
@@ -23,7 +23,7 @@ export default function Layout() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-6">
               <Link to="/" className="flex items-center gap-2.5">
-                <div className="h-10 w-10 rounded-xl overflow-hidden bg-brand shrink-0">
+                <div className="h-10 w-10 overflow-hidden bg-brand shrink-0">
                   <Image src={LOGO_URL} alt="Concretar Apps" className="w-full h-full" />
                 </div>
                 <span className="font-bold text-lg uppercase tracking-tight text-white">
