@@ -84,8 +84,8 @@ export default function AppForm({ initial, onSubmit, onCancel }) {
       </div>
       <div className="space-y-2">
         <Label className="text-xs font-medium text-slate-500">APK do app (instalação direta no Android)</Label>
-        <Input value={data.apk_url} onChange={set("apk_url")} placeholder="Cole o link do APK (hospedado em outro lugar)" className={field} />
-        <p className="text-xs text-slate-400">O upload direto de APK não é suportado — hospede o arquivo (ex.: Google Drive com link público) e cole a URL aqui.</p>
+        <Input value={data.apk_url} onChange={set("apk_url")} placeholder="Link direto do APK (GitHub Releases recomendado)" className={field} />
+        <p className="text-xs text-slate-400">Cole o link de download direto do APK. Recomendado: GitHub Releases — gera URL direta que instala em um toque, sem login. O OneDrive pessoal migrado não permite download direto.</p>
       </div>
       <div className="space-y-2">
         <Label className="text-xs font-medium text-slate-500">Frase curta</Label>

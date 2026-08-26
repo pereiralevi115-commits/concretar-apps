@@ -133,6 +133,15 @@ function resolveGoogleDrive(url) {
   return url;
 }
 
+// GitHub release assets 302 to a pre-signed objects.githubusercontent.com URL
+// that serves the file directly. Resolve to that CDN URL server-side.
+async function resolveGitHubRelease(url) {
+  const res = await fetch(url, { redirect: 'manual', headers: { 'user-agent': UA } });
+  const loc = res.headers.get('location');
+  if (loc && /githubusercontent\.com/i.test(loc)) return loc;
+  return url;
+}
+
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -152,6 +161,8 @@ export default async function(req) {
       direct = resolveSharePoint(url);
     } else if (/drive\.google\.com/i.test(url)) {
       direct = resolveGoogleDrive(url);
+    } else if (/github\.com\/[^/]+\/[^/]+\/releases\/download\//i.test(url)) {
+      direct = await resolveGitHubRelease(url);
     }
 
     return Response.json({ url: direct });

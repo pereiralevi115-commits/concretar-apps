@@ -13,6 +13,11 @@ export default function InstallSheet({ app, open, onOpenChange }) {
 
   const handleInstall = async () => {
     if (!app.apk_url) return;
+    // URLs já diretas (armazenamento do app ou CDN) abem sem resolução.
+    if (/media\.base44\.com|wixstatic\.com/i.test(app.apk_url)) {
+      window.open(app.apk_url, "_blank");
+      return;
+    }
     setResolving(true);
     try {
       const res = await base44.functions.invoke("resolveDownloadUrl", { url: app.apk_url });
