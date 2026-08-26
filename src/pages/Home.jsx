@@ -32,48 +32,48 @@ export default function Home() {
   const featured = filtered.filter((a) => a.featured);
 
   return (
-    <div className="space-y-10">
+    <div className="p-4 md:p-8 space-y-6">
       <div className="space-y-4">
-        <h1 className="font-display text-4xl tracking-tight leading-tight">
-          Seus apps,<br /><span className="text-white/40">em um só lugar.</span>
-        </h1>
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+        <h1 className="text-2xl font-bold text-slate-900">Vitrine de apps</h1>
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
             placeholder="Buscar apps"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            className="pl-11 h-12 rounded-2xl bg-white/5 border-white/10 text-white placeholder:text-white/30"
+            className="pl-10 h-9 rounded-md border-slate-200 bg-white text-sm text-slate-700 placeholder:text-slate-500 focus:ring-2 focus:ring-brand/40 focus:border-brand"
           />
         </div>
       </div>
 
-      {loading && <p className="text-white/40 text-sm">Carregando...</p>}
+      {loading && <p className="text-sm text-slate-500">Carregando...</p>}
 
       {!loading && apps.length === 0 && (
         <div className="text-center py-16 space-y-3">
-          <Boxes className="w-10 h-10 text-white/20 mx-auto" />
-          <p className="text-white/50">Nenhum app na sua loja ainda.</p>
-          <Link to="/gerenciar" className="text-white underline text-sm">Adicionar o primeiro app</Link>
+          <div className="h-14 w-14 rounded-full bg-slate-100 mx-auto flex items-center justify-center">
+            <Boxes className="h-7 w-7 text-slate-500" />
+          </div>
+          <p className="text-slate-500 text-sm">Nenhum app na sua loja ainda.</p>
+          <Link to="/gerenciar" className="text-slate-900 font-medium underline text-sm">Adicionar o primeiro app</Link>
         </div>
       )}
 
       {featured.length > 0 && (
-        <section className="space-y-4">
-          <h2 className="text-xs uppercase tracking-[0.2em] text-white/40">Destaques</h2>
-          <div className="flex gap-4 overflow-x-auto pb-2 -mx-5 px-5">
+        <section className="space-y-3">
+          <h2 className="text-base font-semibold text-slate-900">Destaques</h2>
+          <div className="flex gap-4 overflow-x-auto pb-2">
             {featured.map((app) => (
               <Link
                 key={app.id}
                 to={`/app/${app.id}`}
-                className="shrink-0 w-64 rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.07] to-transparent p-5 space-y-3"
+                className="shrink-0 w-64 rounded-2xl border border-slate-200 bg-white shadow-sm p-5 space-y-3 hover:border-slate-300 transition-colors"
               >
-                <div className="w-14 h-14 rounded-2xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center">
-                  {app.icon_url ? <Image src={app.icon_url} alt={app.name} className="w-full h-full" /> : <Boxes className="w-5 h-5 text-white/40" />}
+                <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
+                  {app.icon_url ? <Image src={app.icon_url} alt={app.name} className="w-full h-full" /> : <Boxes className="w-5 h-5 text-slate-400" />}
                 </div>
                 <div>
-                  <p className="font-medium">{app.name}</p>
-                  <p className="text-sm text-white/50 line-clamp-2">{app.tagline}</p>
+                  <p className="font-semibold text-slate-900">{app.name}</p>
+                  <p className="text-sm text-slate-500 line-clamp-2">{app.tagline}</p>
                 </div>
               </Link>
             ))}
@@ -82,11 +82,13 @@ export default function Home() {
       )}
 
       {filtered.length > 0 && (
-        <section className="space-y-2">
-          <h2 className="text-xs uppercase tracking-[0.2em] text-white/40 mb-4">Todos os apps</h2>
-          {filtered.map((app) => (
-            <AppCard key={app.id} app={app} onInstall={handleInstall} />
-          ))}
+        <section className="space-y-3">
+          <h2 className="text-base font-semibold text-slate-900">Todos os apps</h2>
+          <div className="space-y-2">
+            {filtered.map((app) => (
+              <AppCard key={app.id} app={app} onInstall={handleInstall} />
+            ))}
+          </div>
         </section>
       )}
 

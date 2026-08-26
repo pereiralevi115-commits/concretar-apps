@@ -19,46 +19,46 @@ export default function AppForm({ initial, onSubmit, onCancel }) {
     setSaving(false);
   };
 
-  const field = "bg-white/5 border-white/10 text-white h-11 rounded-xl";
+  const field = "h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 placeholder:text-slate-500 focus:ring-2 focus:ring-brand/40 focus:border-brand";
 
   return (
     <form onSubmit={submit} className="space-y-4">
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label className="text-white/70">Nome do app</Label>
+          <Label className="text-xs font-medium text-slate-500">Nome do app</Label>
           <Input required value={data.name} onChange={set("name")} className={field} />
         </div>
         <div className="space-y-2">
-          <Label className="text-white/70">Categoria</Label>
+          <Label className="text-xs font-medium text-slate-500">Categoria</Label>
           <Input value={data.category} onChange={set("category")} className={field} />
         </div>
       </div>
       <div className="space-y-2">
-        <Label className="text-white/70">Link do app (URL publicada)</Label>
+        <Label className="text-xs font-medium text-slate-500">Link do app (URL publicada)</Label>
         <Input required type="url" placeholder="https://..." value={data.url} onChange={set("url")} className={field} />
       </div>
       <div className="space-y-2">
-        <Label className="text-white/70">Link do ícone</Label>
+        <Label className="text-xs font-medium text-slate-500">Link do ícone</Label>
         <Input value={data.icon_url} onChange={set("icon_url")} className={field} />
       </div>
       <div className="space-y-2">
-        <Label className="text-white/70">Frase curta</Label>
+        <Label className="text-xs font-medium text-slate-500">Frase curta</Label>
         <Input value={data.tagline} onChange={set("tagline")} className={field} />
       </div>
       <div className="space-y-2">
-        <Label className="text-white/70">Descrição</Label>
-        <Textarea value={data.description} onChange={set("description")} className="bg-white/5 border-white/10 text-white rounded-xl min-h-24" />
+        <Label className="text-xs font-medium text-slate-500">Descrição</Label>
+        <Textarea value={data.description} onChange={set("description")} className="rounded-md border border-slate-200 bg-white text-sm text-slate-700 min-h-24 focus:ring-2 focus:ring-brand/40 focus:border-brand" />
       </div>
-      <div className="flex items-center justify-between rounded-xl border border-white/10 p-4">
-        <Label className="text-white/70">Destacar na vitrine</Label>
+      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <Label className="text-sm font-medium text-slate-700">Destacar na vitrine</Label>
         <Switch checked={data.featured} onCheckedChange={(v) => setData({ ...data, featured: v })} />
       </div>
       <div className="flex gap-3">
-        <Button type="submit" disabled={saving} className="rounded-xl bg-white text-black hover:bg-white/90">
+        <Button type="submit" variant="brand" disabled={saving} className="rounded-lg">
           {saving ? "Salvando..." : "Salvar app"}
         </Button>
         {onCancel && (
-          <Button type="button" variant="ghost" onClick={onCancel} className="rounded-xl text-white/60">
+          <Button type="button" variant="outline" onClick={onCancel} className="rounded-lg">
             Cancelar
           </Button>
         )}

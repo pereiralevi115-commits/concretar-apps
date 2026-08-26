@@ -21,22 +21,23 @@ export default function InstallSheet({ app, open, onOpenChange }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-neutral-950 border-white/10 text-white max-w-md">
+      <DialogContent className="bg-white border-slate-200 max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display text-xl">Instalar {app.name}</DialogTitle>
+          <DialogTitle className="font-bold text-lg text-slate-900">Instalar {app.name}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
           {steps.map((s, i) => (
             <div key={i} className="flex gap-3 items-start">
-              <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                <s.icon className="w-4 h-4 text-white/70" />
+              <div className="h-9 w-9 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                <s.icon className="w-4 h-4" />
               </div>
-              <p className="text-sm text-white/70 leading-relaxed pt-2">{s.text}</p>
+              <p className="text-sm text-slate-600 leading-relaxed pt-1.5">{s.text}</p>
             </div>
           ))}
         </div>
         <Button
-          className="w-full h-12 rounded-xl bg-white text-black hover:bg-white/90"
+          variant="brand"
+          className="w-full h-10 rounded-lg"
           onClick={() => window.open(app.url, "_blank")}
         >
           Abrir {app.name}
