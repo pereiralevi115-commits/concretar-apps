@@ -7,11 +7,11 @@ import { getInstallSteps } from "@/lib/deviceInstall";
 function toDirectDownload(url) {
   if (!url) return url;
   try {
-    // OneDrive pessoal (onedrive.live.com / 1drv.ms) — usa a API de shares
-    // que retorna um redirecionamento direto ao conteúdo do arquivo.
+    // OneDrive pessoal (onedrive.live.com / 1drv.ms) — API de shares
+    // com /root/content retorna o conteúdo direto do arquivo (redireciona).
     if (/onedrive\.live\.com|1drv\.ms/i.test(url)) {
       const b64 = btoa(url).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-      return `https://api.onedrive.com/v1.0/shares/u!${b64}/content`;
+      return `https://api.onedrive.com/v1.0/shares/u!${b64}/root/content`;
     }
     // OneDrive for Business / SharePoint — ?download=1 força o download
     if (/sharepoint\.com|-my\.sharepoint\.com/i.test(url)) {
