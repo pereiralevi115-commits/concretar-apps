@@ -7,11 +7,21 @@ import { getInstallSteps } from "@/lib/deviceInstall";
 function toDirectDownload(url) {
   if (!url) return url;
   try {
-    // OneDrive share links — force download
-    if (/onedrive\.live\.com|1drv\.ms/i.test(url)) {
+    // OneDrive share links — force download direto
+    if (/onedrive\.live\.com/i.test(url)) {
       const u = new URL(url);
-      if (u.hostname === "1drv.ms") return url;
-      u.searchParams.set("download", "1");
+      const resid = u.searchParams.get("resid");
+      const authkey = u.searchParams.get("authkey");
+      if (resid) {
+        const params = new URLSearchParams({ resid });
+        if (authkey) params.set("authkey", authkey);
+        return `https://onedrive.live.com/download.aspx?${params.toString()}`;
+      }
+    }
+    // 1drv.ms short links — anexa ?e=download para forçar download
+    if (/1drv\.ms/i.test(url)) {
+      const u = new URL(url);
+      u.searchParams.set("e", "download");
       return u.toString();
     }
     // Google Drive share links — force direct download
