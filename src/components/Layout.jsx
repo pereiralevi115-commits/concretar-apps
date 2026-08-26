@@ -59,9 +59,29 @@ export default function Layout() {
           </div>
         </div>
       </header>
-      <main>
+      <main className="pb-16 sm:pb-0">
         <Outlet />
       </main>
+
+      {/* Barra de navegação inferior — mobile */}
+      <nav className="sm:hidden fixed bottom-0 inset-x-0 z-50 bg-slate-900 border-t border-slate-800 grid grid-cols-2">
+        {navItems.map((item) => {
+          const active = pathname === item.to;
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={`flex flex-col items-center justify-center gap-1 py-2.5 text-xs font-medium transition-colors ${
+                active ? "text-brand" : "text-slate-400"
+              }`}
+            >
+              <Icon className="w-5 h-5 shrink-0" />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }
