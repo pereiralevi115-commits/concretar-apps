@@ -61,12 +61,12 @@ export default function Home() {
       {featured.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-base font-semibold text-slate-900">Destaques</h2>
-          <div className="flex gap-4 overflow-x-auto pb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {featured.map((app) => (
               <Link
                 key={app.id}
                 to={`/app/${app.id}`}
-                className="shrink-0 w-64 rounded-2xl border border-slate-200 bg-white shadow-sm p-5 space-y-3 hover:border-slate-300 transition-colors"
+                className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 space-y-3 hover:border-slate-300 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
