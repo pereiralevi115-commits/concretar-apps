@@ -115,8 +115,6 @@ async function resolveOneDrivePersonal(url) {
   // not truly anonymous and we fall back to the original share URL.
   const sharesApi = `https://api.onedrive.com/v1.0/shares/u!${base64UrlEncode(url)}/root/content`;
   const sharesBlob = await followToFile(sharesApi);
-  // Only accept a real CDN redirect target (not the shares API URL itself,
-  // which means a 401 — share is not truly anonymous).
   if (sharesBlob && sharesBlob.url && sharesBlob.url !== sharesApi) return sharesBlob.url;
   return url;
 }
